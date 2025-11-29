@@ -26,8 +26,8 @@ import requests
 import os
 import gdown
 import shutil
-import pyheif
-from PIL import Image
+# import pyheif
+# from PIL import Image
 import piexif
 import exifread
 from datetime import datetime
