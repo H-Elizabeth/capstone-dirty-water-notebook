@@ -7,7 +7,7 @@ geopandas
 numpy
 requests
 gdown
-pyheif
+pillow-heif
 Pillow
 piexif
 exifread
@@ -19,3 +19,4 @@ google-auth
 google-auth-oauthlib
 google-auth-httplib2
 google-api-python-client
+
