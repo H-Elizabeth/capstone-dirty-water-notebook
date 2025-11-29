@@ -60,7 +60,7 @@ geolabels_link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9KmvTArEvOnt
 geolabels = pd.read_csv(geolabels_link)
 
 #samples_link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9KmvTArEvOntjGpzFbpai7tfGCE4atG7cre5BiG_CEhMQw7cOo6bz-SmgJRY7rGCP7ERnRywkwiw7/pub?gid=1821472518&single=true&output=csv'
-samples_link = 'https://docs.google.com/spreadsheets/d/1cGEgp_KWN5K2wKLm5Q1Binx--cr9H51zil9uzjSIRII/edit?gid=1821472518#gid=1821472518/pub?gid=1821472518&single=true&output=csv'
+samples_link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8AZ4z4OsYe6uZheHGlQXr6Vm3sA0bgQtOzkS7HH8K_QneISWsvYdvvxWOUV-HdsTymtZe3qbS2LbS/pub?output=csv'
 samples = pd.read_csv(samples_link)
 
 encampments_link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9KmvTArEvOntjGpzFbpai7tfGCE4atG7cre5BiG_CEhMQw7cOo6bz-SmgJRY7rGCP7ERnRywkwiw7/pub?gid=1918593179&single=true&output=csv'
