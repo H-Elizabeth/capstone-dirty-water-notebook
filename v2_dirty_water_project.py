@@ -262,234 +262,232 @@ initial_rain_gauge = rain_figures.get(pd.Timestamp(unique_dates[0]))
 if not os.path.exists(initial_rain_gauge):
     initial_rain_gauge = None
 
-app.layout = html.Div([
-    html.Div(
-        style={
-            'backgroundColor': '#f0f0f0',
-            'borderRadius': '10px',
-            'padding': '10px',
-            'width': '98%',
-            'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.2)',
-            'display': 'flex',
-            'alignItems': 'center',
-            'justifyContent': 'flex-start'
-        },
-        children=[
-            html.Label('Select Date:', style={'fontSize': 24, 'textAlign': 'left', 'marginRight': '20px'}),
-            html.Div(
-                style={
-                    'flex': '1',
-                    'minWidth': '300px',
-                    'marginLeft': '20px',
-                    'marginRight': '20px'
-                },
-                children=[
-                    dcc.Slider(
-                        id='date-slider',
-                        min=0,
-                        max=len(unique_dates) - 1,
-                        value=0,
-                        marks={i: {'label': f"{pd.Timestamp(date).strftime('%b, %Y')}", 'style': {'whiteSpace': 'nowrap', 'color': 'Black'}} for i, date in enumerate(unique_dates)},
-                        step=None,
-                        updatemode='drag',
-                        included=False,
-                        vertical=False
-                    )
-                ]
-            )
-        ]
-    ),
-    html.Button('Start/Stop', id='start-button', n_clicks=0, style={'marginBottom': '10px'}),
-    dcc.Interval(id='interval-component', interval=10 * 1000, max_intervals=0),
-    html.Div([
-        html.Div([
-          html.Div(id='date-indicator',
-                children=['Sample Date:'],
-                style={
-                  'backgroundColor': '#1976D2',
-                  'borderRadius': '5px',
-                  'padding': '4px 4px',
-                  'fontSize': '16px',
-                  'color': 'white',
-                  'textAlign': 'center',
-                  'fontWeight': 'bold',
-                  'fontFamily': 'Helvetica'
-              }),
-            dcc.Graph(id='map', style={'width': '100%', 'height': '500px'}),
-            dcc.Markdown(id='debug-output', style={'whiteSpace': 'pre-line'}),
-            dcc.Store(id='zoom-level', data=12),
-            dcc.Store(id='lat-lon', data={'lat': 38.45, 'lon': -122.7}),
-        ], style={'width': '75%', 'display': 'inline-block'}),
-
-        html.Div([
-            dcc.Tabs(
-                id='tabs',
-                children=[
-                    dcc.Tab(
-                        label='Map Settings',
-                        children=[
-                            html.Div([
-                                html.Img(
-                                    id='rain-gauge',
-                                    src=initial_rain_gauge,
-                                    style={'width': '96%', 'display': 'block', 'paddingTop': '0px', 'paddingRight': '2px', 'paddingBottom': '10px', 'paddingLeft': '10px'}
-                                ),
-                                dcc.Dropdown(
-                                    id='color-dropdown',
-                                    options=[
-                                        {'label': 'pH', 'value': 'pH'},
-                                        {'label': 'TEMP', 'value': 'TEMP'},
-                                        {'label': 'DO(mg/L)', 'value': 'DO(mg/L)'},
-                                        {'label': 'D.O%', 'value': 'D.O%'},
-                                        {'label': 'Conductivity(us/cm)', 'value': 'Conductivity(us/cm)'},
-                                        {'label': 'Phosphorus', 'value': 'Phosphorus'},
-                                        {'label': 'Ecoli (MPN/100mL)', 'value': 'Ecoli (MPN/100mL)'},
-                                        {'label': 'Enterococcus', 'value': 'Enterococcus'},
-                                        {'label': 'HF183 (MPN/100mL)', 'value': 'HF183 (MPN/100mL)'}
-                                    ],
-                                    value='Ecoli (MPN/100mL)',
-                                    style={'width': '98%', 'margin-left': '5px'}
-                                ),
-                                html.Div(
-                                    id='color-key',
-                                    style={'border': 'thin lightgrey solid', 'marginLeft': '10px', 'marginRight': '2px', 'padding': '10px', 'marginTop': '5px'}
-                                )
-                            ])
-                        ],
-                        style={
-                            'fontSize': '12px',
-                            'fontFamily': 'Helvetica',
-                            'padding': '5px 10px',
-                            'backgroundColor': '#2196F3',
-                            'color': 'white',
-                            'borderRadius': '5px',
-                        },
-                        selected_style={
-                            'fontSize': '12px',
-                            'fontFamily': 'Helvetica',
-                            'backgroundColor': '#1976D2',
-                            'color': 'white',
-                            'fontWeight': 'bold',
-                            'padding': '5px 10px',
-                            'borderRadius': '5px',
-                        }
-                    ),
-                    dcc.Tab(
-                        label='Graphs',
-                        children=[
-                            html.Div(id="date-display",
-                              style={
-                                'padding': '10px',
+app.layout = html.Div(
+    style={
+        'display': 'flex',  # Flex layout for the main container
+        'flexDirection': 'column',  # Stack elements vertically
+        'height': '100vh',  # Full viewport height to avoid squishing
+    },
+    children=[
+        # Header or other controls, like date slider
+        html.Div(
+            style={
+                'backgroundColor': '#f0f0f0',
+                'borderRadius': '10px',
+                'padding': '10px',
+                'width': '98%',
+                'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.2)',
+                'display': 'flex',
+                'alignItems': 'center',
+                'justifyContent': 'flex-start'
+            },
+            children=[
+                html.Label('Select Date:', style={'fontSize': 24, 'textAlign': 'left', 'marginRight': '20px'}),
+                html.Div(
+                    style={
+                        'flex': '1',
+                        'minWidth': '300px',
+                        'marginLeft': '20px',
+                        'marginRight': '20px'
+                    },
+                    children=[
+                        dcc.Slider(
+                            id='date-slider',
+                            min=0,
+                            max=len(unique_dates) - 1,
+                            value=0,
+                            marks={i: {'label': f"{pd.Timestamp(date).strftime('%b, %Y')}", 'style': {'whiteSpace': 'nowrap', 'color': 'Black'}} for i, date in enumerate(unique_dates)},
+                            step=None,
+                            updatemode='drag',
+                            included=False,
+                            vertical=False
+                        )
+                    ]
+                )
+            ]
+        ),
+        
+        # Button and interval component (these remain unchanged)
+        html.Button('Start/Stop', id='start-button', n_clicks=0, style={'marginBottom': '10px'}),
+        dcc.Interval(id='interval-component', interval=10 * 1000, max_intervals=0),
+        
+        # Main content area with Graphs and other elements
+        html.Div(
+            style={
+                'display': 'flex',  # Use flexbox to arrange graph and settings side-by-side
+                'flexDirection': 'row',  # Row layout for the two major sections
+                'height': '100%',  # Take the full height of the container
+            },
+            children=[
+                # Left side (Graph container)
+                html.Div(
+                    style={
+                        'width': '75%',  # Graph takes up 75% of the screen width
+                        'display': 'flex',
+                        'flexDirection': 'column',  # Stack items vertically within this container
+                        'height': '100%',  # Fill the height of the parent container
+                    },
+                    children=[
+                        html.Div(
+                            id='date-indicator',
+                            children=['Sample Date:'],
+                            style={
+                                'backgroundColor': '#1976D2',
+                                'borderRadius': '5px',
+                                'padding': '4px 4px',
                                 'fontSize': '16px',
-                                'color': 'darkblue',
+                                'color': 'white',
                                 'textAlign': 'center',
                                 'fontWeight': 'bold',
                                 'fontFamily': 'Helvetica'
-                            }),
-                            html.Div(id="water-flow-label",
-                              children=['⬅ Water Flow Direction'],
-                              style={
-                                'padding': '0px',
-                                'fontSize': '14px',
-                                'color': 'darkblue',
-                                'textAlign': 'center',
-                                'fontFamily': 'Helvetica'
-                            }),
-                            html.Div(id="graph-tab-container",
+                            }
+                        ),
+                        # Graph container with flex layout
+                        html.Div(
+                            id="graph-tab-container",
                             children=[
-                            dcc.Graph(
-                                id='sample-date-graphs',
-                                config={
-                                    'scrollZoom': False,
-                                    'displayModeBar': False,
-                                    'showAxisDragHandles': False,
-                                    'staticPlot': False
-                                },
-                                style={
-                                    'width': '98%',
-                                    'display': 'block',
-                                    'padding': '0',
-                                    'margin': '0',
-                                }
-                            )
+                                dcc.Graph(
+                                    id='sample-date-graphs',
+                                    config={
+                                        'scrollZoom': False,
+                                        'displayModeBar': False,
+                                        'showAxisDragHandles': False,
+                                        'staticPlot': False
+                                    },
+                                    style={
+                                        'width': '100%',
+                                        'height': '100%',  # Fill the parent container's height
+                                        'padding': '0',
+                                        'margin': '0',
+                                    }
+                                )
                             ],
-                                style={
-                                    'width': '100%',
-                                    'display': 'flex',
-                                    'flex': 1,
-                                    'flexDirection': column,
-                                    'padding': '0',
-                                    'margin': '0',
-                                    'height': '474px',
-                                    'overflowY': 'auto'
-                                }      )                      
-                        ],
-                        style={
-                            'fontSize': '12px',
-                            'fontFamily': 'Helvetica',
-                            'padding': '5px 10px',
-                            'backgroundColor': '#2196F3',
-                            'color': 'white',
-                            'borderRadius': '5px',
-                        },
-                        selected_style={
-                            'fontSize': '12px',
-                            'fontFamily': 'Helvetica',
-                            'backgroundColor': '#1976D2',
-                            'color': 'white',
-                            'fontWeight': 'bold',
-                            'padding': '5px 10px',
-                            'borderRadius': '5px',
-                        }
-                    ),
-                    dcc.Tab(
-                        label='Site Data',
-                        children=[
-                            html.Div(id="site-info-display",
-                              children=['Click on a site on the map to display data.'],
-                              style={
-                                'padding': '10px',
-                                'fontSize': '16px',
-                                'color': 'darkblue',
-                                'textAlign': 'center',
-                                'fontWeight': 'bold',
-                                'fontFamily': 'Helvetica'
-                            }),
-                            html.Div(id='date-image-list', style={'height': '500px', 'overflow-y': 'scroll'}),
-                            html.Div(
-                                children=[
-                                    html.Img(
-                                        id='image',
-                                        src=None,
-                                        style={'width': '95%', 'padding': '20px', 'textAlign': 'center', 'objectFit': 'contain', 'padding': '0', 'margin': '0',}
-                                    )
-                                ],
-                                style={'display': 'flex', 'flexDirection': 'column', 'alignItems': 'center'}
-                            )
-                        ],
-                        style={
-                            'fontSize': '12px',
-                            'fontFamily': 'Helvetica',
-                            'padding': '5px 10px',
-                            'backgroundColor': '#2196F3',
-                            'color': 'white',
-                            'borderRadius': '5px',
-                        },
-                        selected_style={
-                            'fontSize': '12px',
-                            'fontFamily': 'Helvetica',
-                            'backgroundColor': '#1976D2',
-                            'color': 'white',
-                            'fontWeight': 'bold',
-                            'padding': '5px 10px',
-                            'borderRadius': '5px',
-                        }
-                    )
-                ]
-            )
-        ], style={'width': '25%', 'display': 'inline-block', 'vertical-align': 'top'})
-    ], style={'display': 'flex', 'flexDirection': 'row'}),
-])
+                            style={
+                                'width': '100%',
+                                'display': 'flex',
+                                'flex': '1',  # Allow it to grow and take up remaining space
+                                'flexDirection': 'column',
+                                'height': '474px',  # Fixed height for consistency
+                                'overflowY': 'auto',  # Enable vertical scroll if needed
+                                'minHeight': '474px',  # Enforce minimum height
+                            }
+                        )
+                    ]
+                ),
+
+                # Right side (Settings container)
+                html.Div(
+                    style={
+                        'width': '25%',  # Settings container takes up 25% of the screen width
+                        'display': 'flex',
+                        'flexDirection': 'column',
+                        'height': '100%',
+                    },
+                    children=[
+                        dcc.Tabs(
+                            id='tabs',
+                            children=[
+                                dcc.Tab(
+                                    label='Map Settings',
+                                    children=[
+                                        html.Div([
+                                            html.Img(
+                                                id='rain-gauge',
+                                                src=initial_rain_gauge,
+                                                style={'width': '96%', 'display': 'block', 'paddingTop': '0px', 'paddingRight': '2px', 'paddingBottom': '10px', 'paddingLeft': '10px'}
+                                            ),
+                                            dcc.Dropdown(
+                                                id='color-dropdown',
+                                                options=[
+                                                    {'label': 'pH', 'value': 'pH'},
+                                                    {'label': 'TEMP', 'value': 'TEMP'},
+                                                    {'label': 'DO(mg/L)', 'value': 'DO(mg/L)'},
+                                                    {'label': 'D.O%', 'value': 'D.O%'},
+                                                    {'label': 'Conductivity(us/cm)', 'value': 'Conductivity(us/cm)'},
+                                                    {'label': 'Phosphorus', 'value': 'Phosphorus'},
+                                                    {'label': 'Ecoli (MPN/100mL)', 'value': 'Ecoli (MPN/100mL)'},
+                                                    {'label': 'Enterococcus', 'value': 'Enterococcus'},
+                                                    {'label': 'HF183 (MPN/100mL)', 'value': 'HF183 (MPN/100mL)'}
+                                                ],
+                                                value='Ecoli (MPN/100mL)',
+                                                style={'width': '98%', 'margin-left': '5px'}
+                                            ),
+                                            html.Div(
+                                                id='color-key',
+                                                style={'border': 'thin lightgrey solid', 'marginLeft': '10px', 'marginRight': '2px', 'padding': '10px', 'marginTop': '5px'}
+                                            )
+                                        ])
+                                    ],
+                                    style={
+                                        'fontSize': '12px',
+                                        'fontFamily': 'Helvetica',
+                                        'padding': '5px 10px',
+                                        'backgroundColor': '#2196F3',
+                                        'color': 'white',
+                                        'borderRadius': '5px',
+                                    },
+                                    selected_style={
+                                        'fontSize': '12px',
+                                        'fontFamily': 'Helvetica',
+                                        'backgroundColor': '#1976D2',
+                                        'color': 'white',
+                                        'fontWeight': 'bold',
+                                        'padding': '5px 10px',
+                                        'borderRadius': '5px',
+                                    }
+                                ),
+                                dcc.Tab(
+                                    label='Graphs',
+                                    children=[
+                                        html.Div(
+                                            id="date-display",
+                                            style={
+                                                'padding': '10px',
+                                                'fontSize': '16px',
+                                                'color': 'darkblue',
+                                                'textAlign': 'center',
+                                                'fontWeight': 'bold',
+                                                'fontFamily': 'Helvetica'
+                                            }
+                                        ),
+                                        html.Div(
+                                            id="water-flow-label",
+                                            children=['⬅ Water Flow Direction'],
+                                            style={
+                                                'padding': '0px',
+                                                'fontSize': '14px',
+                                                'color': 'darkblue',
+                                                'textAlign': 'center',
+                                                'fontFamily': 'Helvetica'
+                                            }
+                                        ),
+                                    ],
+                                    style={
+                                        'fontSize': '12px',
+                                        'fontFamily': 'Helvetica',
+                                        'padding': '5px 10px',
+                                        'backgroundColor': '#2196F3',
+                                        'color': 'white',
+                                        'borderRadius': '5px',
+                                    },
+                                    selected_style={
+                                        'fontSize': '12px',
+                                        'fontFamily': 'Helvetica',
+                                        'backgroundColor': '#1976D2',
+                                        'color': 'white',
+                                        'fontWeight': 'bold',
+                                        'padding': '5px 10px',
+                                        'borderRadius': '5px',
+                                    }
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ]
+        )
+    ]
+)
 
 
 # Initialize a variable to keep track of the last clicked point
