@@ -395,8 +395,6 @@ app.layout = html.Div([
                                 'textAlign': 'center',
                                 'fontFamily': 'Helvetica'
                             }),
-                            html.Div(id="graph-tab-container",
-                            children=[
                             dcc.Graph(
                                 id='sample-date-graphs',
                                 config={
@@ -410,18 +408,11 @@ app.layout = html.Div([
                                     'display': 'block',
                                     'padding': '0',
                                     'margin': '0',
+                                    'height': '474px',
+                                    'overflowY': 'auto'
                                 }
                             )
                             ],
-                                style={
-                                    'width': '100%',
-                                    'display': 'block',
-                                    'padding': '0',
-                                    'margin': '0',
-                                    'height': '474px',
-                                    'overflowY': 'auto'
-                                }      )                      
-                        ],
                         style={
                             'fontSize': '12px',
                             'fontFamily': 'Helvetica',
